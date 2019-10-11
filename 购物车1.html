@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>购物车</title>
+    <meta charset="utf-8" />
+    <style type="text/css">
+      h1 {
+        text-align:center;
+      }
+      table {
+        margin:0 auto;
+        width:60%;
+        border:2px solid #aaa;
+        border-collapse:collapse;
+      }
+      table th, table td {
+        border:2px solid #aaa;
+        padding:5px;
+      }
+      th {
+        background-color:#eee;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>真划算</h1>
+    <table>
+      <tr>
+        <th>商品</th>
+        <th>单价(元)</th>
+        <th>颜色</th>
+        <th>库存</th>
+        <th>好评率</th>
+        <th>操作</th>
+      </tr>   
+      <tr>
+        <td class="name">罗技M185鼠标</td>
+        <td class="aprice">80</td>
+        <td>黑色</td>
+        <td>893</td>
+        <td>98%</td>
+        <td align="center">
+          <input type="button" class="addbtn" value="加入购物车" />
+        </td>
+      </tr>
+      <tr>
+        <td class="name">微软X470键盘</td>
+        <td class="aprice">150</td>
+        <td>黑色</td>
+        <td>9028</td>
+        <td>96%</td>
+        <td align="center">
+          <input type="button" class="addbtn" value="加入购物车" />
+        </td>
+      </tr>
+      <tr>
+        <td class="name">洛克iphone6手机壳</td>
+        <td class="aprice">60</td>
+        <td>透明</td>
+        <td>672</td>
+        <td>99%</td>
+        <td align="center">
+          <input type="button" class="addbtn" value="加入购物车" />
+        </td>
+      </tr>
+      <tr>
+        <td class="name">蓝牙耳机</td>
+        <td class="aprice">100</td>
+        <td>蓝色</td>
+        <td>8937</td>
+        <td>95%</td>
+        <td align="center">
+          <input type="button" class="addbtn" value="加入购物车" />
+        </td>
+      </tr>
+      <tr>
+        <td class="name">金士顿U盘</td>
+        <td class="aprice">70</td>
+        <td>红色</td>
+        <td>482</td>
+        <td>100%</td>
+        <td align="center">
+          <input type="button" class="addbtn" value="加入购物车" />
+        </td>
+      </tr>
+    </table>
+  
+    <h1>购物车</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>商品</th>
+          <th>单价(元)</th>
+          <th>数量</th>
+          <th>金额(元)</th>
+          <th>删除</th>
+        </tr>
+      </thead>
+      <tbody id="goods">
+        <tr class="com">
+          <td>罗技M185鼠标</td>
+          <td class="carprice">80</td>
+          <td align="center">
+            <input type="button" class="jian" value="-"/>
+            <input type="text" size="3" readonly value="1" class="num"/>
+            <input type="button" class="jia" value="+"/>
+          </td>
+          <td class="asumprice">80</td>
+          <td align="center"><input type="button" class="del" value="x"/></td>
+        </tr>
+        
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" align="right">总计</td>
+          <td id="total"></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>    
+    <script src="../jquery-3.4.1.js" type="text/javascript" charset="UTF-8"></script>
+    <script type="text/javascript">
+    	$(function(){
+    		//添加购物车
+    		//获取点击的索引
+    		totals();
+    		$('.addbtn').click(function(){
+    			var index = $('.addbtn').index(this);
+//  			console.log(index);
+				//根据索引获取name数组的值
+    			var name = $('.name').eq(index).text();
+//  			console.log(name);
+				//根据索引获取价格数组的值
+    			var aprice = $('.aprice').eq(index).text();
+//  			console.log(aprice);
+					var text='<tr class="com"><td>'+name+'</td><td class="carprice">'+aprice+'</td><td align="center"><input type="button" class="jian" value="-"/><input type="text" size="3" readonly value="1" class="num"/><input type="button" class="jia" value="+"/></td><td class="asumprice">80</td><td align="center"><input type="button" class="del" value="x"/></td></tr>'
+    			$(text).appendTo('#goods')
+    			totals();
+    		})
+    		//数值的增减
+    		//on绑定事件
+    		//$('大选择器').on('事件','',fun)
+    		$('body').on('click','.jian',function(){
+    			//获取减号按钮的索引
+    			var index = $('.jian').index(this);
+    			var type = $(this).val();
+    			asumprice(type,index);
+    		})
+    		$('body').on('click','.jia',function(){
+    			var index = $('.jia').index(this);
+  
+ 			    var type = $(this).val();
+    			asumprice(type,index);
+    			
+    		})
+    		
+    		function asumprice(type,index){
+    			//根据索引获取商品数量
+    			var num = $('.num').eq(index).val();
+    			var carprice=$('.carprice').eq(index).html();
+    			if(type=='+'){
+    				num++
+    				$('.jian').eq(index).removeAttr('disabled');
+    			}else if(type=='-'){
+    				if(num<2){
+    					$('.jian').eq(index).attr('disabled','disabled');
+    				}else{
+    					num--
+    				}
+    			}
+    			$('.num').eq(index).val(num);
+    			$('.asumprice').eq(index).html(num*carprice);
+    				totals();
+    		}
+    			function totals(){
+    				var arr = $('.asumprice');
+    				var total=0;
+    				for(var i=0;i< arr.length;i++){
+    					var c =$('.asumprice').eq(i).text();
+    					total+=parseInt(c);	
+    				}
+    				$('#total').html(total);
+    			}
+    			//删除按钮
+    			$('body').on('click','.del',function(){
+    				var index = $('.del').index(this);
+    				$('.com').eq(index).remove()
+    				totals();
+    			})
+    	})
+    </script>
+  </body>
+</html>
+
